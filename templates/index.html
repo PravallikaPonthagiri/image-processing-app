@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Cloud Image Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>✨ Cloud Image Editor</h1>
+      <p>Enhance, Edit & Transform Your Images Instantly</p>
+
+      <form
+        action="/process"
+        method="post"
+        enctype="multipart/form-data"
+        id="uploadForm"
+      >
+        <div class="drop-area" id="dropArea">
+          <p>Drag & Drop Image Here</p>
+          <span>OR</span>
+
+          <label class="custom-file">
+            Choose File
+            <input type="file" name="image" id="fileInput" required hidden />
+          </label>
+        </div>
+
+        <img id="preview" src="#" alt="Preview Image" />
+
+        <select name="option" class="select-box">
+          <option value="clear">✨ Clear Image</option>
+          <option value="sharpen">🔍 Sharpen</option>
+          <option value="edge">🖊 Edge Detection</option>
+          <option value="brightness">☀ Increase Brightness</option>
+          <option value="contrast">🎨 Increase Contrast</option>
+          <option value="blur">🌫 Blur</option>
+          <option value="grayscale">⚫ Convert to Grayscale</option>
+          <option value="rotate">🔄 Rotate Image</option>
+          <option value="background">🧠 Remove Background</option>
+          <option value="deblur">🧠 AI Enhance (Remove Blur)</option>
+          <option value="resize">📏 Resize Image</option>
+          <option value="crop">✂ Crop</option>
+          <option value="erase">🧽 Object Eraser</option>
+        </select>
+
+        <div id="resizeOptions" class="tool-options">
+          <input type="number" name="width" placeholder="Width" />
+          <input type="number" name="height" placeholder="Height" />
+        </div>
+
+        <div id="cropOptions" class="tool-options">
+          <input type="number" name="x" placeholder="Start X" />
+          <input type="number" name="y" placeholder="Start Y" />
+          <input type="number" name="crop_width" placeholder="Crop Width" />
+          <input type="number" name="crop_height" placeholder="Crop Height" />
+        </div>
+
+        <div id="eraseOptions" class="tool-options">
+          <input type="number" name="ex" placeholder="Erase X" />
+          <input type="number" name="ey" placeholder="Erase Y" />
+          <input type="number" name="erase_width" placeholder="Erase Width" />
+          <input type="number" name="erase_height" placeholder="Erase Height" />
+        </div>
+
+        <button type="submit">🚀 Process Image</button>
+      </form>
+    </div>
+
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const preview = document.getElementById("preview");
+      const dropArea = document.getElementById("dropArea");
+
+      fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.style.display = "block";
+            preview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      dropArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropArea.classList.add("dragover");
+      });
+
+      dropArea.addEventListener("dragleave", () => {
+        dropArea.classList.remove("dragover");
+      });
+
+      dropArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropArea.classList.remove("dragover");
+        fileInput.files = e.dataTransfer.files;
+        fileInput.dispatchEvent(new Event("change"));
+      });
+
+      const select = document.querySelector("select");
+      const resizeBox = document.getElementById("resizeOptions");
+      const cropBox = document.getElementById("cropOptions");
+      const eraseBox = document.getElementById("eraseOptions");
+
+      resizeBox.style.display = "none";
+      cropBox.style.display = "none";
+      eraseBox.style.display = "none";
+
+      select.addEventListener("change", function () {
+        resizeBox.style.display = "none";
+        cropBox.style.display = "none";
+        eraseBox.style.display = "none";
+
+        if (this.value === "resize") resizeBox.style.display = "block";
+        if (this.value === "crop") cropBox.style.display = "block";
+        if (this.value === "erase") eraseBox.style.display = "block";
+      });
+    </script>
+  </body>
+</html>
